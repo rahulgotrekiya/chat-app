@@ -2,7 +2,7 @@
 	File: main.c
 	Compiler: Turbo C 3.0
 	Description: A simple terminal-based chat application demonstrating
-		fundamental C programming concepts for college students.
+		     fundamental C programming concepts for college students.
 
 	Author: Rahul Gotrekiya
 	Date: 28/07/2025
@@ -47,16 +47,7 @@ void loadData(void);
 void findUser(char name[]);
 void clearScreen(void);
 void pressAnyKey(void);
-
-/* Helper Functions */
-void clearScreen(void) {
-	clrscr();
-}
-
-void pressAnyKey(void) {
-	printf("\nPress any key to continue...");
-	getch();
-}
+void printLine(void);
 
 void findUser(char name[]) {
 	int i;
@@ -70,8 +61,71 @@ void findUser(char name[]) {
 
 int main()
 {
-	clearScreen();
-	printf("Chat application in c");
-	pressAnyKey();
+	int choice;
+
+	while(1) {
+		showMainMenu();
+		printf("Enter choice: ");
+		scanf("%d", &choice);
+
+		switch(choice) {
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				clearScreen();
+				gotoxy(36, 12);
+				printf("Goodbye !");
+				gotoxy(30, 12);
+				pressAnyKey();
+				exit(0);
+			default:
+				printf("\nInvalid choice !");
+				pressAnyKey();
+		}
+	}
+
 	return 0;
+}
+
+void showMainMenu(void) {
+	clearScreen();
+	printf("\n");
+	gotoxy(25, 1);
+	printLine();
+	gotoxy(33, 2);
+	printf("SIMPLE CHAT SYSTEM\n");
+	gotoxy(25, 3);
+	printLine();
+	gotoxy(25, 4);
+	printf("Total Users: %d\n", userCount);
+	gotoxy(25, 5);
+	printf("Total Messages: %d\n", msgCount);
+	gotoxy(25, 6);
+	printLine();
+	gotoxy(25, 7);
+	printf("1. Login\n");
+	gotoxy(25, 8);
+	printf("2. Register New User\n");
+	gotoxy(25, 9);
+	printf("3. Exit\n");
+	gotoxy(25, 10);
+	printLine();
+}
+
+
+
+/* Helper Functions */
+void clearScreen(void) {
+	clrscr();
+}
+
+void printLine(void) {
+	printf("--------------------------------\n");
+}
+
+void pressAnyKey(void) {
+	printf("\nPress any key to continue...");
+	getch();
 }
