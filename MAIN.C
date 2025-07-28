@@ -63,6 +63,10 @@ int main()
 {
 	int choice;
 
+	userCount = 0;
+	msgCount = 0;
+	strcpy(currentUser, "");
+
 	while(1) {
 		showMainMenu();
 		printf("Enter choice: ");
@@ -72,6 +76,7 @@ int main()
 			case 1:
 				break;
 			case 2:
+				registerUser();
 				break;
 			case 3:
 				clearScreen();
@@ -88,6 +93,10 @@ int main()
 
 	return 0;
 }
+
+/*
+	Menu
+*/
 
 void showMainMenu(void) {
 	clearScreen();
@@ -114,9 +123,81 @@ void showMainMenu(void) {
 	printLine();
 }
 
+/*
+	User Management Functions
+*/
+void registerUser(void) {
+	char username[20], password[15], confirm[15];
+	int i;
 
+	clearScreen();
+	gotoxy(25, 1);
+	printLine();
+	gotoxy(33, 2);
+	printf("SIMPLE CHAT SYSTEM\n");
+	gotoxy(25, 3);
+	printLine();
 
-/* Helper Functions */
+	if(userCount >= 20) {
+		printf("\n    			  Sorry! Maximum user reached.\n");
+		pressAnyKey();
+		return;
+	}
+
+	printf("Enter username: ");
+	fflush(stdin);
+	gets(username);
+
+	// Check if username already exist
+	for(i = 0; i < userCount; i++) {
+		if(strcmp(users[i].username, username) == 0) {
+			printf("\nUsername aready exist! Try another.\n");
+			pressAnyKey();
+			return;
+		}
+	}
+
+	if(strlen(username) < 3) {
+		printf("\nUsername must be at least 3 characters!.\n");
+		pressAnyKey();
+		return;
+	}
+
+	printf("Enter password: ");
+	gets(password);
+
+	if(strlen(password) < 3) {
+		printf("\nPassword must be at least 3 characters!.\n");
+		pressAnyKey();
+		return;
+	}
+
+	printf("Confirm password: ");
+	gets(confirm);
+
+	if(strcmp(password, confirm) != 0) {
+		printf("\nPasswords don't match!.\n");
+		pressAnyKey();
+		return;
+	}
+
+	printf("Enter full name: ");
+	gets(users[userCount].fullname);
+
+	// Save user data
+	strcpy(users[userCount].fullname, username);
+	strcpy(users[userCount].password, password);
+	userCount++;
+
+	printf("\nUser registered successfully!\n");
+	printf("Username: %s\n", username);
+
+	pressAnyKey();
+}
+
+/*
+	Helper Functions
+*/
 void clearScreen(void) {
 	clrscr();
 }
