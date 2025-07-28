@@ -37,27 +37,17 @@ char currentUser[20];
 /* Function Prototypes */
 void showMainMenu(void);
 void registerUser(void);
-void loginUser(void);
+int loginUser(void);
 void showChatMenu(void);
 void sendMessage(void);
 void viewMessages(void);
 void viewAllUsers(void);
 void saveData(void);
 void loadData(void);
-void findUser(char name[]);
+int findUser(char name[]);
 void clearScreen(void);
 void pressAnyKey(void);
 void printLine(void);
-
-void findUser(char name[]) {
-	int i;
-	for(i = 0; i < userCount; i++) {
-		if(strcmp(users[i].username, name) == 0) {
-			return i;
-		}
-	}
-	return -1;
-}
 
 int main()
 {
@@ -74,6 +64,9 @@ int main()
 
 		switch(choice) {
 			case 1:
+				if(loginUser()) {
+					pressAnyKey();
+				}
 				break;
 			case 2:
 				registerUser();
@@ -185,7 +178,7 @@ void registerUser(void) {
 	gets(users[userCount].fullname);
 
 	// Save user data
-	strcpy(users[userCount].fullname, username);
+	strcpy(users[userCount].username, username);
 	strcpy(users[userCount].password, password);
 	userCount++;
 
@@ -193,6 +186,64 @@ void registerUser(void) {
 	printf("Username: %s\n", username);
 
 	pressAnyKey();
+}
+
+int loginUser(void) {
+	char username[20], password[15];
+	int i, attempts;
+
+	clearScreen();
+	gotoxy(25, 1);
+	printLine();
+	gotoxy(36, 2);
+	printf("USER LOGIN\n");
+	gotoxy(25, 3);
+	printLine();
+
+	if(userCount == 0) {
+		printf("\n    			    No users registered yet!\n");
+		printf("\n    			     Please register first\n");
+		pressAnyKey();
+		return 0;
+	}
+
+	for(attempts = 0; attempts < 3; attempts++) {
+		printf("Enter username: ");
+		fflush(stdin);
+		gets(username);
+
+		printf("Enter password: ");
+		gets(password);
+
+		// Check login credentials
+		for(i = 0; i < userCount; i++) {
+			if(strcmp(users[i].username, username) == 0 &&
+			   strcmp(users[i].password, password) == 0) {
+				strcmp(currentUser, username);
+				printf("\nLogin succesful!\n");
+				printf("Welcome %s!\n", users[i].fullname);
+				pressAnyKey();
+				return 1;
+			}
+		}
+		printf("\nInvalid username of password!\n");
+		if(attempts < 2) {
+			printf("Try again (%d attempts left) \n", 2-attempts);
+			pressAnyKey();
+			clearScreen();
+			printf("\n");
+			gotoxy(25, 1);
+			printLine();
+			gotoxy(36, 2);
+			printf("USER LOGIN\n");
+			gotoxy(25, 3);
+			printLine();
+		}
+	}
+
+	printf("Too many failed attempts!\n");
+	pressAnyKey();
+	return 0;
 }
 
 /*
@@ -209,4 +260,15 @@ void printLine(void) {
 void pressAnyKey(void) {
 	printf("\nPress any key to continue...");
 	getch();
+}
+
+int findUser(char name[]) {
+
+	int i;
+	for(i = 0; i < userCount; i++) {
+		if(strcmp(users[i].username, name) == 0) {
+			return i;
+		}
+	}
+	return -1;
 }
