@@ -6,6 +6,8 @@
 
 	Author: Rahul Gotrekiya
 	Date: 28/07/2025
+
+	NOTE: prevent user from self-messaging
 */
 
 #include <stdio.h>
@@ -29,7 +31,7 @@ struct Message {
 
 /* Global Variables */
 struct User users[20];
-struct Message message[50];
+struct Message messages[50];
 int userCount = 0;
 int msgCount = 0;
 char currentUser[20];
@@ -53,14 +55,18 @@ int main()
 {
 	int choice;
 
-	userCount = 1;
+	userCount = 2;
 	msgCount = 0;
 	strcpy(currentUser, "");
 
-	// Add default user for testing
-	strcpy(users[0].username, "test");
+	// Add default users for testing
+	strcpy(users[0].username, "user1");
 	strcpy(users[0].password, "1111");
 	strcpy(users[0].fullname, "Test User");
+
+	strcpy(users[1].username, "user2");
+	strcpy(users[1].password, "1111");
+	strcpy(users[1].fullname, "Test User");
 
 	while(1) {
 		showMainMenu();
@@ -146,13 +152,12 @@ void showChatMenu(void) {
 		gotoxy(25, 10);
 		printLine();
 
-		printf("Ener choice: ");
+		printf("Enter choice: ");
 		scanf("%d", &choice);
 
 		switch(choice) {
 			case 1:
-				printf("\nSend msg");
-				pressAnyKey();
+				sendMessage();
 				break;
 			case 2:
 				printf("\nView msg");
@@ -302,6 +307,65 @@ int loginUser(void) {
 	printf("Too many failed attempts!\n");
 	pressAnyKey();
 	return 0;
+}
+
+/*
+	Messaging Functions
+*/
+void sendMessage(void) {
+	char receiver[20], text[100];
+
+	clearScreen();
+	printf("\n");
+	gotoxy(25, 1);
+	printLine();
+	gotoxy(35, 2);
+	printf("SEND MESSAGE\n");
+	gotoxy(25, 3);
+	printLine();
+
+	if(msgCount >= 50) {
+		printf("Message storage full!\n");
+		pressAnyKey();
+		return;
+	}
+
+	printf("Enter receiver username: ");
+	fflush(stdin);
+	gets(receiver);
+
+	// Check if receiver exists
+	if(findUser(receiver) == -1) {
+		printf("\nUser '%s' not found!\n", receiver);
+		pressAnyKey();
+		return;
+	}
+
+	// Check self-messaging
+	if(strcmp(receiver, currentUser) == 0) {
+		printf("\nYou Cannot send messae to yourself!\n");
+		pressAnyKey();
+		return;
+	}
+
+	printf("Enter your message: ");
+	gets(text);
+
+	if(strlen(text) == 0) {
+		printf("\nMessage cannot be empty!\n");
+		pressAnyKey();
+		return;
+	}
+
+	// store messge
+	strcpy(messages[msgCount].sender, currentUser);
+	strcpy(messages[msgCount].receiver, receiver);
+	strcpy(messages[msgCount].text, text);
+	messages[msgCount].isRead = 0;
+	msgCount++;
+
+	printf("\nMessage sent to %s!\n", receiver);
+	pressAnyKey();
 }
 
 /*
