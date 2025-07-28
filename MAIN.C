@@ -53,9 +53,14 @@ int main()
 {
 	int choice;
 
-	userCount = 0;
+	userCount = 1;
 	msgCount = 0;
 	strcpy(currentUser, "");
+
+	// Add default user for testing
+	strcpy(users[0].username, "test");
+	strcpy(users[0].password, "1111");
+	strcpy(users[0].fullname, "Test User");
 
 	while(1) {
 		showMainMenu();
@@ -65,7 +70,7 @@ int main()
 		switch(choice) {
 			case 1:
 				if(loginUser()) {
-					pressAnyKey();
+					showChatMenu();
 				}
 				break;
 			case 2:
@@ -90,7 +95,6 @@ int main()
 /*
 	Menu
 */
-
 void showMainMenu(void) {
 	clearScreen();
 	printf("\n");
@@ -114,6 +118,60 @@ void showMainMenu(void) {
 	printf("3. Exit\n");
 	gotoxy(25, 10);
 	printLine();
+}
+void showChatMenu(void) {
+	int choice;
+
+	while(1) {
+		clearScreen();
+		printf("\n");
+		gotoxy(25, 1);
+		printLine();
+		gotoxy(36, 2);
+		printf("CHAT MENU\n");
+		gotoxy(25, 3);
+		printLine();
+		gotoxy(25, 4);
+		printf("Welcome, %s!\n", currentUser);
+		gotoxy(25, 5);
+		printLine();
+		gotoxy(25, 6);
+		printf("1. Send Message\n");
+		gotoxy(25, 7);
+		printf("2. View My Messages\n");
+		gotoxy(25, 8);
+		printf("3. View All Users\n");
+		gotoxy(25, 9);
+		printf("4. Logout\n");
+		gotoxy(25, 10);
+		printLine();
+
+		printf("Ener choice: ");
+		scanf("%d", &choice);
+
+		switch(choice) {
+			case 1:
+				printf("\nSend msg");
+				pressAnyKey();
+				break;
+			case 2:
+				printf("\nView msg");
+				pressAnyKey();
+				break;
+			case 3:
+				printf("\nView Users");
+				pressAnyKey();
+				break;
+			case 4:
+				strcpy(currentUser, "");
+				printf("\nLogged out successfully!");
+				pressAnyKey();
+				return;
+			default:
+				printf("\nInvalid choice!");
+				pressAnyKey();
+		}
+	}
 }
 
 /*
