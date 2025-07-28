@@ -34,11 +34,44 @@ int userCount = 0;
 int msgCount = 0;
 char currentUser[20];
 
+/* Function Prototypes */
+void showMainMenu(void);
+void registerUser(void);
+void loginUser(void);
+void showChatMenu(void);
+void sendMessage(void);
+void viewMessages(void);
+void viewAllUsers(void);
+void saveData(void);
+void loadData(void);
+void findUser(char name[]);
+void clearScreen(void);
+void pressAnyKey(void);
+
+/* Helper Functions */
+void clearScreen(void) {
+	clrscr();
+}
+
+void pressAnyKey(void) {
+	printf("\nPress any key to continue...");
+	getch();
+}
+
+void findUser(char name[]) {
+	int i;
+	for(i = 0; i < userCount; i++) {
+		if(strcmp(users[i].username, name) == 0) {
+			return i;
+		}
+	}
+	return -1;
+}
 
 int main()
 {
-	clrscr();
+	clearScreen();
 	printf("Chat application in c");
-	getch();
+	pressAnyKey();
 	return 0;
 }
