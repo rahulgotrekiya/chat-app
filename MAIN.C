@@ -163,8 +163,7 @@ void showChatMenu(void) {
 				viewMessages();
 				break;
 			case 3:
-				printf("\nView Users");
-				pressAnyKey();
+				viewAllUsers();
 				break;
 			case 4:
 				strcpy(currentUser, "");
@@ -428,6 +427,34 @@ void viewMessages(void) {
 		printf("\n%d new messages marked as read.\n");
 	}
 
+	pressAnyKey();
+}
+
+void viewAllUsers(void) {
+	int i;
+
+	clearScreen();
+	printf("\n");
+	gotoxy(25, 1);
+	printLine();
+	gotoxy(35, 2);
+	printf("ALL USERS\n");
+	gotoxy(25, 3);
+	printLine();
+
+	if(userCount == 0) {
+		printf("No users registered.\n");
+	} else {
+		printf("Total Users: %d\n\n", userCount);
+		for(i = 0; i < userCount; i++) {
+			printf("[%d] Username: %s\n", i+1, users[i].username);
+			printf("    Full Name: %s\n", users[i].fullname);
+			if(strcmp(users[i].username, currentUser) == 0) {
+				printf("    Status: YOU\n");
+			}
+			printLine();
+		}
+	}
 	pressAnyKey();
 }
 
