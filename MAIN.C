@@ -69,7 +69,7 @@ int main()
 			case 2:
 				registerUser();
 				break;
-			case 3:
+			case 0:
 				clearScreen();
 				saveData();
 				gotoxy(36, 12);
@@ -109,7 +109,7 @@ void showMainMenu(void) {
 	gotoxy(25, 8);
 	printf("2. Register New User\n");
 	gotoxy(25, 9);
-	printf("3. Exit\n");
+	printf("0. Exit\n");
 	gotoxy(25, 10);
 	printLine();
 }
@@ -136,7 +136,7 @@ void showChatMenu(void) {
 		gotoxy(25, 8);
 		printf("3. View All Users\n");
 		gotoxy(25, 9);
-		printf("4. Logout\n");
+		printf("0. Logout\n");
 		gotoxy(25, 10);
 		printLine();
 
@@ -153,7 +153,7 @@ void showChatMenu(void) {
 			case 3:
 				viewAllUsers();
 				break;
-			case 4:
+			case 0:
 				saveData();
 				strcpy(currentUser, "");
 				printf("\nLogged out successfully!");
@@ -384,7 +384,7 @@ void viewMessages(void) {
 				messages[i].isRead = 1; // mark as read
 				unread++;
 			} else {
-				printf("    Status: Read");
+				printf("    Status: Read\n");
 			}
 			printLine();
 		}
@@ -502,7 +502,7 @@ void loadData(void) {
 	}
 
 	// Load messages
-	msgFile = fopen("project/chat/datan/messages.dat", "r");
+	msgFile = fopen("project/chat/data/messages.dat", "r");
 	if(msgFile != NULL) {
 		fscanf(msgFile, "%d", &msgCount);
 		for(i = 0; i < msgCount && i < 50; i++) {
