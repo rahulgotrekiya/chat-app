@@ -160,8 +160,7 @@ void showChatMenu(void) {
 				sendMessage();
 				break;
 			case 2:
-				printf("\nView msg");
-				pressAnyKey();
+				viewMessages();
 				break;
 			case 3:
 				printf("\nView Users");
@@ -365,6 +364,70 @@ void sendMessage(void) {
 	msgCount++;
 
 	printf("\nMessage sent to %s!\n", receiver);
+	pressAnyKey();
+}
+
+void viewMessages(void) {
+	int i, found = 0, unread = 0;
+
+	clearScreen();
+	printf("\n");
+	gotoxy(25, 1);
+	printLine();
+	gotoxy(35, 2);
+	printf("YOUR MESSAGES\n");
+	gotoxy(25, 3);
+	printLine();
+	gotoxy(25, 4);
+	printf("Message for: %s\n", currentUser);
+	gotoxy(25, 5);
+	printLine();
+
+	// Show receied messages
+	printf("RECEIVED MESSAGE\n");
+	printLine();
+	for(i = 0; i < msgCount; i++) {
+		if(strcmp(messages[i].receiver, currentUser) == 0) {
+			found++;
+			printf("[%d] From: %s\n", found, messages[i].sender);
+			printf("    Message: %s\n", messages[i].text);
+			if(messages[i].isRead == 0) {
+				printf("    Status: NEW\n");
+				messages[i].isRead = 1; // mark as read
+				unread++;
+			} else {
+				printf("    Status: Read");
+			}
+			printLine();
+		}
+	}
+
+	if(found == 0){
+		printf("No messages received.\n");
+	}
+
+	// Show sent mesages
+	printf("\nSENT MESSAGE\n");
+	printLine();
+	found = 0;
+	for(i = 0; i < msgCount; i++) {
+		if(strcmp(messages[i].sender, currentUser) == 0) {
+			found++;
+			printf("[%d] To: %s\n", found, messages[i].receiver);
+			printf("    Message: %s\n", messages[i].text);
+			printf("    Status: %s\n", messages[i].isRead ? "Read" : "Unread");
+			printLine();
+		}
+	}
+
+	if(found == 0){
+		printf("No messages sent.\n");
+	}
+
+	if(unread > 0){
+		printf("\n%d new messages marked as read.\n");
+	}
+
 	pressAnyKey();
 }
 
