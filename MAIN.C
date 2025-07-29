@@ -6,8 +6,6 @@
 
 	Author: Rahul Gotrekiya
 	Date: 28/07/2025
-
-	NOTE: prevent user from self-messaging
 */
 
 #include <stdio.h>
@@ -55,18 +53,7 @@ int main()
 {
 	int choice;
 
-	userCount = 2;
-	msgCount = 0;
-	strcpy(currentUser, "");
-
-	// Add default users for testing
-	strcpy(users[0].username, "user1");
-	strcpy(users[0].password, "1111");
-	strcpy(users[0].fullname, "Test User");
-
-	strcpy(users[1].username, "user2");
-	strcpy(users[1].password, "1111");
-	strcpy(users[1].fullname, "Test User");
+	loadData();
 
 	while(1) {
 		showMainMenu();
@@ -84,6 +71,7 @@ int main()
 				break;
 			case 3:
 				clearScreen();
+				saveData();
 				gotoxy(36, 12);
 				printf("Goodbye !");
 				gotoxy(30, 12);
@@ -166,6 +154,7 @@ void showChatMenu(void) {
 				viewAllUsers();
 				break;
 			case 4:
+				saveData();
 				strcpy(currentUser, "");
 				printf("\nLogged out successfully!");
 				pressAnyKey();
@@ -280,7 +269,7 @@ int loginUser(void) {
 		for(i = 0; i < userCount; i++) {
 			if(strcmp(users[i].username, username) == 0 &&
 			   strcmp(users[i].password, password) == 0) {
-				strcmp(currentUser, username);
+				strcpy(currentUser, username);
 				printf("\nLogin succesful!\n");
 				printf("Welcome %s!\n", users[i].fullname);
 				pressAnyKey();
@@ -424,7 +413,7 @@ void viewMessages(void) {
 	}
 
 	if(unread > 0){
-		printf("\n%d new messages marked as read.\n");
+		printf("\n%d new messages marked as read.\n", unread);
 	}
 
 	pressAnyKey();
@@ -457,6 +446,85 @@ void viewAllUsers(void) {
 	}
 	pressAnyKey();
 }
+
+/*
+	File Functions
+*/
+void saveData(void) {
+	FILE *userFile, *msgFile;
+	int i;
+
+	// Save users
+	userFile = fopen("project/chat/data/users.dat", "w");
+	if(userFile != NULL) {
+		fprintf(userFile, "%d\n", userCount);
+		for(i = 0; i < userCount; i++) {
+			fprintf(userFile, "%s %s %s\n",
+				users[i].username,
+				users[i].password,
+				users[i].fullname);
+		}
+		fclose(userFile);
+	}
+
+	// Save messages
+	msgFile = fopen("project/chat/data/messages.dat", "w");
+	if(msgFile != NULL) {
+		fprintf(msgFile, "%d\n", msgCount);
+		for(i = 0; i < msgCount; i++) {
+			fprintf(msgFile, "%s %s %d %s\n",
+				messages[i].sender,
+				messages[i].receiver,
+				messages[i].isRead,
+				messages[i].text);
+		}
+		fclose(msgFile);
+	}
+}
+
+void loadData(void) {
+	FILE *userFile, *msgFile;
+	int i;
+
+	// Load users
+	userFile = fopen("project/chat/data/users.dat", "r");
+	if(userFile != NULL) {
+		fscanf(userFile, "%d", &userCount);
+		for(i = 0; i < userCount && i < 20; i++) {
+			fscanf(userFile, "%s %s %s",
+				users[i].username,
+				users[i].password,
+				users[i].fullname);
+		}
+		fclose(userFile);
+	} else {
+		userCount = 0;
+	}
+
+	// Load messages
+	msgFile = fopen("project/chat/datan/messages.dat", "r");
+	if(msgFile != NULL) {
+		fscanf(msgFile, "%d", &msgCount);
+		for(i = 0; i < msgCount && i < 50; i++) {
+			fscanf(msgFile, "%s %s %d",
+				messages[i].sender,
+				messages[i].receiver,
+				&messages[i].isRead);
+			fgets(messages[i].text, 100, msgFile); // Read rest of lines
+			// Remove newline from message text
+			if(messages[i].text[0] == ' ') {
+				strcpy(messages[i].text, messages[i].text + 1);
+			}
+			if(messages[i].text[strlen(messages[i].text) - 1] == '\n') {
+				messages[i].text[strlen(messages[i].text) - 1] = '\0';
+			}
+		}
+		fclose(msgFile);
+	} else {
+		msgCount = 0;
+	}
+}
+
 
 /*
 	Helper Functions
