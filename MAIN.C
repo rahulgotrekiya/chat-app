@@ -51,6 +51,7 @@ void pressAnyKey(void);
 void printLine(void);
 void showStats(void);
 int countUnreadMessages(void);
+void getPassword(char password[]);
 
 int main()
 {
@@ -228,7 +229,7 @@ void registerUser(void) {
 	}
 
 	printf("Enter password: ");
-	gets(password);
+	getPassword(password);
 
 	if(strlen(password) < 3) {
 		printf("\nPassword must be at least 3 characters!.\n");
@@ -236,8 +237,8 @@ void registerUser(void) {
 		return;
 	}
 
-	printf("Confirm password: ");
-	gets(confirm);
+	printf("\nConfirm password: ");
+	getPassword(confirm);
 
 	if(strcmp(password, confirm) != 0) {
 		printf("\nPasswords don't match!.\n");
@@ -245,7 +246,7 @@ void registerUser(void) {
 		return;
 	}
 
-	printf("Enter full name: ");
+	printf("\nEnter full name: ");
 	gets(users[userCount].fullname);
 
 	// Save user data
@@ -284,7 +285,7 @@ int loginUser(void) {
 		gets(username);
 
 		printf("Enter password: ");
-		gets(password);
+		getPassword(password);
 
 		// Check login credentials
 		for(i = 0; i < userCount; i++) {
@@ -623,3 +624,26 @@ int findUser(char name[]) {
 	}
 	return -1;
 }
+
+void getPassword(char password[]) {
+	char ch;
+	int i = 0;
+
+	while(1) {
+		ch = getch();
+
+		if(ch == '\r'){
+			password[i] = '\0';
+			break;
+		} else if(ch == '\b') {
+			if(i > 0) {
+				i--;
+				printf("\b \b");
+			}
+		} else {
+			password[i++] = ch;
+			printf("*");
+		}
+	}
+}
+
