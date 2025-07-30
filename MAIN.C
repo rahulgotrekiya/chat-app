@@ -6,6 +6,7 @@
 
 	Author: Rahul Gotrekiya
 	Date: 28/07/2025
+	GitHub: @rahulgotrekiya
 */
 
 #include <stdio.h>
@@ -48,6 +49,8 @@ int findUser(char name[]);
 void clearScreen(void);
 void pressAnyKey(void);
 void printLine(void);
+void showStats(void);
+int countUnreadMessages(void);
 
 int main()
 {
@@ -69,6 +72,9 @@ int main()
 			case 2:
 				registerUser();
 				break;
+			case 3:
+				showStats();
+				break;
 			case 0:
 				clearScreen();
 				saveData();
@@ -87,7 +93,7 @@ int main()
 }
 
 /*
-	Menu
+	Menu functions
 */
 void showMainMenu(void) {
 	clearScreen();
@@ -109,14 +115,19 @@ void showMainMenu(void) {
 	gotoxy(25, 8);
 	printf("2. Register New User\n");
 	gotoxy(25, 9);
-	printf("0. Exit\n");
+	printf("3. View system Statistics\n");
 	gotoxy(25, 10);
+	printf("0. Exit\n");
+	gotoxy(25, 11);
 	printLine();
 }
 void showChatMenu(void) {
-	int choice;
+	int choice, unreadCount;
 
 	while(1) {
+		unreadCount = countUnreadMessages();
+
+
 		clearScreen();
 		printf("\n");
 		gotoxy(25, 1);
@@ -128,16 +139,23 @@ void showChatMenu(void) {
 		gotoxy(25, 4);
 		printf("Welcome, %s!\n", currentUser);
 		gotoxy(25, 5);
+		if(unreadCount > 0) {
+			printf("You have %d unread messages!\n", unreadCount);
+			gotoxy(25, 6);
+		}
+
 		printLine();
-		gotoxy(25, 6);
-		printf("1. Send Message\n");
 		gotoxy(25, 7);
-		printf("2. View My Messages\n");
+		printf("1. Send Message\n");
 		gotoxy(25, 8);
-		printf("3. View All Users\n");
+		printf("2. View My Messages\n");
 		gotoxy(25, 9);
-		printf("0. Logout\n");
+		printf("3. View All Users\n");
 		gotoxy(25, 10);
+		printf("4. View Your Statistics\n");
+		gotoxy(25, 11);
+		printf("0. Logout\n");
+		gotoxy(25, 12);
 		printLine();
 
 		printf("Enter choice: ");
@@ -152,6 +170,9 @@ void showChatMenu(void) {
 				break;
 			case 3:
 				viewAllUsers();
+				break;
+			case 4:
+				showStats();
 				break;
 			case 0:
 				saveData();
@@ -270,7 +291,7 @@ int loginUser(void) {
 			if(strcmp(users[i].username, username) == 0 &&
 			   strcmp(users[i].password, password) == 0) {
 				strcpy(currentUser, username);
-				printf("\nLogin succesful!\n");
+				printf("\nLogin successful!\n");
 				printf("Welcome %s!\n", users[i].fullname);
 				pressAnyKey();
 				return 1;
@@ -445,6 +466,56 @@ void viewAllUsers(void) {
 		}
 	}
 	pressAnyKey();
+}
+
+void showStats(void) {
+	int i, totalSent = 0, totalReceived = 0;
+
+	clearScreen();
+	printf("\n");
+	gotoxy(25, 1);
+	printLine();
+	gotoxy(32, 2);
+	printf("SYSTEM STATISTICS\n");
+	gotoxy(25, 3);
+	printLine();
+
+	printf("=== Overall Statistics ===\n");
+	printf("Total Users: %d\n", userCount);
+	printf("Total Messages: %d\n", msgCount);
+	printf("Max Users Allowed: 20\n");
+	printf("Max Messages Allowed: 100\n");
+	printLine();
+
+	if(strlen(currentUser) > 0) {
+		/* Count messages for current user */
+		for(i = 0; i < msgCount; i++) {
+			if(strcmp(messages[i].sender, currentUser) == 0) {
+				totalSent++;
+			}
+			if(strcmp(messages[i].receiver, currentUser) == 0) {
+				totalReceived++;
+			}
+		}
+
+		printf("=== Your Statistics ===\n");
+		printf("Messages Sent: %d\n", totalSent);
+		printf("Messages Received: %d\n", totalReceived);
+		printf("Unread Messages: %d\n", countUnreadMessages());
+	}
+
+	pressAnyKey();
+}
+
+int countUnreadMessages(void) {
+	int i, count = 0;
+	
+	for(i = 0; i < msgCount; i++) {
+		if(strcmp(messages[i].receiver, currentUser) == 0 && messages[i].isRead == 0) {
+			count++;
+		}
+	}
+	return count;
 }
 
 /*
